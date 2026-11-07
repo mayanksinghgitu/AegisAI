@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Advanced Emotion Detection System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Advanced AI-based Emotion Detection System for mental health awareness">
+<meta name="author" content="Mayank Singh">
+
+<style>
+:root{
+ --bg:#0f172a;--card:#111827;--text:#e5e7eb;
+ --accent:#38bdf8;--muted:#94a3b8;
+ --danger:#ef4444;--success:#22c55e;
+ --warning:#f59e0b; /* New color for Pharmacy */
+}
+body{
+ background:linear-gradient(135deg,#020617,#0f172a);
+ color:var(--text);font-family:Arial,Helvetica,sans-serif;
+ padding:24px;
+}
+.container{max-width:1200px;margin:auto;}
+.card{
+ background:var(--card);border-radius:16px;
+ padding:20px;margin-bottom:20px;
+ box-shadow:0 10px 30px rgba(0,0,0,.3);
+}
+h1,h2,h3{color:var(--accent);}
+.grid{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+ gap:20px;
+}
+.emotion{
+ background:#0b1220;padding:16px;border-radius:14px;
+ transition:.2s;
+}
+.emotion:hover{transform:translateY(-4px);}
+button{
+ padding:10px 14px;border:none;border-radius:10px;
+ background:var(--accent);font-weight:bold;cursor:pointer;
+}
+.back-btn{background:#334155;color:#fff;}
+.stat{background:#020617;padding:10px;border-radius:10px;margin-bottom:10px;}
+.good{color:var(--success);font-weight:bold;}
+.bad{color:var(--danger);font-weight:bold;}
+.page{display:none;opacity:0;transform:scale(.97);transition:.3s;}
+.page.active{display:block;opacity:1;transform:scale(1);}
+.footer{text-align:center;color:var(--muted);}
+
+/* --- NEW FEATURE STYLES (Added) --- */
+#signInPage {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--bg); z-index: 10000; display: flex; align-items: center; justify-content: center;
+}
+.auth-card { width: 320px; text-align: center; }
+.auth-input { 
+    width: 90%; padding: 12px; margin: 10px 0; border-radius: 8px; 
+    border: 1px solid #334155; background: #1e293b; color: white; 
+}
+
+#chatbot-container {
+    position: fixed; bottom: 20px; right: 20px; width: 300px; height: 400px;
+    background: var(--card); border: 1px solid var(--accent); border-radius: 15px;
+    display: none; flex-direction: column; z-index: 999; overflow: hidden;
+}
+#chat-header { background: var(--accent); color: #000; padding: 12px; font-weight: bold; display: flex; justify-content: space-between; }
+#chat-history { flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
+.bot-msg { background: #1e293b; padding: 8px; border-radius: 8px; align-self: flex-start; }
+.user-msg { background: var(--accent); color: #000; padding: 8px; border-radius: 8px; align-self: flex-end; }
+#chat-input-box { display: flex; padding: 10px; border-top: 1px solid #334155; }
+
+.doctor-card, .medicine-card { background: #020617; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+.doctor-card { border-left: 4px solid var(--success); }
+.medicine-card { border-left: 4px solid var(--warning); }
+</style>
+</head>
+
+<body>
+
+<div id="signInPage">
+    <div class="card auth-card">
+        <h2>Welcome Back</h2>
+        <p style="color:var(--muted)">Sign in to access AI MindCare</p>
+        <input type="text" class="auth-input" id="loginName" placeholder="Full Name">
+        <input type="password" class="auth-input" placeholder="Password">
+        <button onclick="handleSignIn()" style="width: 100%; margin-top: 10px;">Login</button>
+    </div>
+</div>
+
+<div class="container" id="mainApp" style="visibility: hidden;">
+
+<div class="card page active" id="home">
+<h1>NeuroPredict Care AI – Affective Intelligence Engine</h1>
+<div style="display: flex; gap: 10px; flex-wrap: wrap;">
+    <button onclick="openAbout()">👨‍💻 About Developer</button>
+    <button onclick="openAppointmentPage()" style="background:var(--success); color:white">📅 Appointments</button>
+    <button onclick="openPharmacyPage()" style="background:var(--warning); color:black">💊 Buy Medicines</button>
+</div>
+
+<p>
+This AI-powered Emotion Detection System analyzes facial expressions and classifies them
+into seven fundamental human emotions. The system is designed to support mental health
+awareness, healthcare monitoring, human–computer interaction, and psychological research.
+</p>
+
+<h2>Detected Emotions</h2>
+<div class="grid" id="emotionGrid"></div>
+</div>
+
+<div class="card page" id="about">
+<button class="back-btn" onclick="goHome()">← Back</button>
+<h2>👨‍💻 About the Developer</h2>
+<div class="stat"><b>Name:</b> Mayank Singh</div>
+<div class="stat"><b>Degree:</b> B.Tech – Computer Science & Engineering</div>
+<div class="stat"><b>Specialization:</b> Artificial Intelligence & Machine Learning</div>
+<div class="stat">
+<b>Skills:</b>
+<ul><li>Python, Java</li><li>Machine Learning & Deep Learning</li><li>Computer Vision (OpenCV)</li><li>Data Analytics</li><li>Web Development</li></ul>
+</div>
+<div class="stat good">“Artificial Intelligence should enhance emotional intelligence, not replace it.”</div>
+</div>
+
+<div class="card page" id="appointmentPage">
+    <button class="back-btn" onclick="goHome()">← Back</button>
+    <h2>📅 Book Specialist Appointment</h2>
+    <div id="docList"></div>
+</div>
+
+<div class="card page" id="pharmacyPage">
+    <button class="back-btn" onclick="goHome()">← Back</button>
+    <h2>💊 MindCare Pharmacy</h2>
+    <p style="color:var(--muted); font-size: 0.9em; margin-bottom: 20px;">Safe, herbal, and AI-suggested supplements for emotional support.</p>
+    <div id="medicineList"></div>
+</div>
+
+
+<div id="detailPages"></div>
+
+<div class="card">
+<h3>⚖️ Ethical & Privacy Considerations</h3>
+<ul>
+<li>No facial data is stored or shared</li>
+<li>Emotion detection is probabilistic, not absolute</li>
+<li>User consent and privacy are essential</li>
+<li>This system supports, not diagnoses</li>
+</ul>
+</div>
+
+<div class="card bad">
+⚠️ <b>Disclaimer:</b> Strictly for educational purposes.
+</div>
+
+<div class="footer">
+© 2026 Emotion Detection System | Developed by Mayank Singh
+</div>
+
+</div>
+
+<div id="chat-trigger" onclick="toggleChat()" style="position: fixed; bottom: 20px; right: 20px; background: var(--accent); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; font-size: 24px; box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);">💬</div>
+
+<div id="chatbot-container">
+    <div id="chat-header"><span>MindCare AI</span> <span onclick="toggleChat()" style="cursor:pointer">✖</span></div>
+    <div id="chat-history">
+        <div class="bot-msg">Hi! I'm your AI assistant. Mention an emotion (e.g., "I feel sad") for tips or type "doctor" to see specialists.</div>
+    </div>
+    <div id="chat-input-box">
+        <input type="text" id="chatInput" style="flex:1; background:transparent; border:none; color:white; outline:none;" placeholder="Type here...">
+        <button onclick="sendChatMessage()">Send</button>
+    </div>
+</div>
+
+<script>
+// --- YOUR ORIGINAL LOGIC (DO NOT REMOVE) ---
+const icons={Angry:"😡",Disgust:"🤢",Fear:"😨",Happy:"😊",Neutral:"😐",Sad:"😢",Surprise:"😲"};
+const emotions=[
+{ name:"Angry", risk:"High", duration:"Long-term potential", stats:"Strong response to perceived injustice.", symptoms:["Increased HR", "Aggression"], impact:"Heart health issues", prevention:["Mindfulness"], do:["Deep breathing"], avoid:["Impulsivity"], treatment:"CBT" },
+{ name:"Disgust", risk:"Medium", duration:"Short-term", stats:"Emotion of rejection.", symptoms:["Nausea"], impact:"Linked to OCD", prevention:["Exposure"], do:["Grounding"], avoid:["Avoidance"], treatment:"Psychotherapy" },
+{ name:"Fear", risk:"High", duration:"Chronic potential", stats:"Survival mechanism.", symptoms:["Sweating", "Hypervigilance"], impact:"Sleep disruption", prevention:["Routine"], do:["Gradual exposure"], avoid:["Catastrophizing"], treatment:"CBT" },
+{ name:"Happy", risk:"Low", duration:"Healthy state", stats:"Reflects well-being.", symptoms:["Energy"], impact:"Better immunity", prevention:["Gratitude"], do:["Socializing"], avoid:["Burnout"], treatment:"None" },
+{ name:"Neutral", risk:"Low", duration:"Stable baseline", stats:"Emotional balance.", symptoms:["Calm"], impact:"Rational clarity", prevention:["Awareness"], do:["Reflection"], avoid:["Ignoring stress"], treatment:"None" },
+{ name:"Sad", risk:"High", duration:"Chronic potential", stats:"Response to loss.", symptoms:["Low energy"], impact:"Reduced functioning", prevention:["Exercise"], do:["Talking"], avoid:["Isolation"], treatment:["Counseling"] },
+{ name:"Surprise", risk:"Low", duration:"Very short", stats:"Response to unexpected.", symptoms:["Raised brows"], impact:"Processes new info", prevention:["Adaptability"], do:["Calm breathing"], avoid:["Panic"], treatment:"None" }
+];
+
+const grid=document.getElementById("emotionGrid");
+const detailContainer=document.getElementById("detailPages");
+
+emotions.forEach((emo,i)=>{
+ const c=document.createElement("div");
+ c.className="emotion";
+ c.innerHTML=`<h3>${icons[emo.name]} ${emo.name}</h3><p>${emo.stats}</p><button onclick="openDetail(${i})">Know More</button>`;
+ grid.appendChild(c);
+
+ const d=document.createElement("div");
+ d.className="card page";
+ d.id=`detail-${i}`;
+ d.innerHTML=`
+ <button class="back-btn" onclick="goHome()">← Back</button>
+ <h2>${emo.name} Details</h2>
+ <button onclick="openPharmacyPage()" style="background:var(--warning); color:black; margin-bottom:15px; font-size:12px;">💊 Buy Remedies for ${emo.name}</button>
+ <div class="stat"><b>Risk:</b> ${emo.risk}</div>
+ <h3>Suggested Actions</h3>
+ <ul>${emo.do.map(item=>`<li>${item}</li>`).join("")}</ul>
+ <button onclick="openAppointmentPage()" style="background:var(--success)">Book Consultation for ${emo.name}</button>`;
+ detailContainer.appendChild(d);
+});
+
+// --- NEW FEATURE LOGIC (Added) ---
+
+// 1. SIGN IN
+function handleSignIn() {
+    const name = document.getElementById('loginName').value;
+    if(name.trim() !== "") {
+        document.getElementById('signInPage').style.display = 'none';
+        document.getElementById('mainApp').style.visibility = 'visible';
+    } else { alert("Please enter your name to continue."); }
+}
+
+// 2. CHATBOT 
+function toggleChat() {
+    const chat = document.getElementById('chatbot-container');
+    chat.style.display = (chat.style.display === 'flex') ? 'none' : 'flex';
+}
+
+// Data for Advanced Bot Logic
+const botKnowledge = {
+    greetings: ["Hello! I'm MindCare AI. How can I support your mental well-being today?", "Hi there. I'm here to listen. How are you feeling?"],
+    emergency: {
+        keywords: ["suicide", "hurt", "kill", "die", "emergency", "help me"],
+        response: "🔴 **Immediate Help Needed:** If you are in immediate danger, please contact a crisis hotline or emergency services (112 in India). You are not alone."
+    },
+    emotions: {
+        sad: {
+            tips: "It's okay to feel this way. Try the '3-3-3 rule': Name 3 things you see, 3 sounds you hear, and move 3 parts of your body.",
+            medicine: "Natural: Chamomile tea or Vitamin D. Clinical: Please see a psychiatrist for persistent low mood.",
+            action: "Would you like to listen to some calming music or book a session?"
+        },
+        angry: {
+            tips: "Anger is often a shield for pain. Try 'Box Breathing': Inhale for 4s, Hold for 4s, Exhale for 4s, Pause for 4s.",
+            medicine: "Avoid stimulants like caffeine. Magnesium-rich foods (dark chocolate/nuts) can help calm the nervous system.",
+            action: "Try a quick physical activity like a 5-minute walk."
+        },
+        fear: {
+            tips: "Grounding technique: Name 5 things you can see, 4 you can touch, 3 you can hear, 2 you can smell, and 1 you can taste.",
+            medicine: "L-Theanine (found in Green Tea) is known for reducing physical stress responses.",
+            action: "Focus on your breathing. You are safe in this moment."
+        }
+    }
+};
+
+function toggleChat() {
+    const chat = document.getElementById('chatbot-container');
+    chat.style.display = (chat.style.display === 'flex') ? 'none' : 'flex';
+    // Add a welcome message if empty
+    const history = document.getElementById('chat-history');
+    if (history.children.length === 1) {
+        addBotMessage(botKnowledge.greetings[Math.floor(Math.random() * botKnowledge.greetings.length)]);
+    }
+}
+
+function addBotMessage(text) {
+    const history = document.getElementById('chat-history');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'bot-msg';
+    msgDiv.innerHTML = text;
+    history.appendChild(msgDiv);
+    history.scrollTop = history.scrollHeight;
+}
+
+// Function to handle clicking on suggestion buttons
+function quickAction(type) {
+    document.getElementById('chatInput').value = type;
+    sendChatMessage();
+}
+const emotionMedicines = {
+    sad: "For persistent sadness, **Vitamin D** and **Omega-3 fatty acids** are often recommended for brain health. Herbal: **Ashwagandha** helps balance cortisol.",
+    angry: "To calm irritation, **Magnesium** supplements help relax muscles and the nervous system. **Lavender tea** is also excellent for immediate cooling.",
+    fear: "For anxiety/fear, **L-Theanine** (found in green tea) or **Chamomile** can help reduce the 'fight or flight' response. **Passionflower** is also used for calming.",
+    disgust: "Since disgust is often physical, **Ginger** or **Peppermint tea** can help settle the stomach and the mind.",
+    surprise: "For the 'shock' of surprise, staying hydrated with **Electrolytes** and using **Lemon Balm** helps stabilize the heart rate.",
+    neutral: "To maintain a balanced state, a good **Multivitamin** and consistent **B12** levels are key for mental clarity."
+};
+function sendChatMessage() {
+    const input = document.getElementById('chatInput');
+    const history = document.getElementById('chat-history');
+    const userText = input.value.trim();
+    const msg = userText.toLowerCase();
+    
+    if(!msg) return;
+
+    // Add User Message
+    history.innerHTML += `<div class="user-msg">${userText}</div>`;
+    input.value = "";
+
+    setTimeout(() => {
+        let reply = "I'm processing that. Could you tell me more about how you feel? You can also type 'doctor' or 'tips'.";
+
+        // 1. Emergency Check
+        if (botKnowledge.emergency.keywords.some(k => msg.includes(k))) {
+            reply = botKnowledge.emergency.response;
+        } 
+        // 2. Emotion Logic
+        else if (msg.includes("sad") || msg.includes("depressed") || msg.includes("low")) {
+            const data = botKnowledge.emotions.sad;
+            reply = `<b>Support:</b> ${data.tips}<br><br><b>Remedy:</b> ${data.medicine}<br><br>${data.action}`;
+        }
+        else if (msg.includes("angry") || msg.includes("frustrated")) {
+            const data = botKnowledge.emotions.angry;
+            reply = `<b>Calming:</b> ${data.tips}<br><br><b>Dietary Tip:</b> ${data.medicine}`;
+        }
+        else if (msg.includes("fear") || msg.includes("anxious") || msg.includes("scared")) {
+            const data = botKnowledge.emotions.fear;
+            reply = `<b>Grounding:</b> ${data.tips}<br><br><b>Suggestion:</b> ${data.action}`;
+        }
+        // 3. General Features
+        else if (msg.includes("doctor") || msg.includes("appointment")) {
+            reply = "I've found 10 specialists for you. <button onclick='openAppointmentPage()' style='background:white; color:black; padding:4px; margin-top:5px; border-radius:4px;'>View Doctor List</button>";
+        }
+        else if (msg.includes("medicine") || msg.includes("remedy") || msg.includes("supplement")) {
+    // Check if a specific emotion is mentioned in the same sentence
+    let detectedEmotion = null;
+    if (msg.includes("sad") || msg.includes("low")) detectedEmotion = "sad";
+    else if (msg.includes("angry") || msg.includes("frustrat")) detectedEmotion = "angry";
+    else if (msg.includes("fear") || msg.includes("anxious") || msg.includes("scared")) detectedEmotion = "fear";
+    else if (msg.includes("disgust")) detectedEmotion = "disgust";
+    else if (msg.includes("surprise")) detectedEmotion = "surprise";
+
+    if (detectedEmotion) {
+        reply = `💊 **Suggested for ${detectedEmotion}:** ${emotionMedicines[detectedEmotion]} <br><br> <button onclick="openPharmacyPage()" style="background:var(--warning); color:black; padding:5px; margin-top:5px; border-radius:5px;">Go to Pharmacy</button>`;
+    } else {
+        reply = "I can suggest herbal remedies and basic supplements. **Which emotion are you feeling right now?** (e.g., type 'medicine for sadness')";
+    }
+}
+        else if (msg.includes("thanks") || msg.includes("thank you")) {
+            reply = "You're very welcome, Mayank. Remember, taking care of your mind is a priority.";
+        }
+
+        addBotMessage(reply);
+    }, 600);
+}
+
+// NEW MEDICINE DATA
+const pharmacyItems = [
+    { name: "Ashwagandha (Stress Relief)", use: "Reduces Cortisol & Anxiety", price: "₹450" },
+    { name: "Magnesium Glycinate", use: "Relaxation & Better Sleep", price: "₹800" },
+    { name: "Vitamin D3 (60K IU)", use: "Mood Booster", price: "₹250" },
+    { name: "L-Theanine", use: "Mental Focus & Calm", price: "₹600" },
+    { name: "Chamomile Tea Bags", use: "Sleep & Digestive Comfort", price: "₹350" },
+    { name: "Omega-3 Fish Oil", use: "Cognitive Function", price: "₹1200" },
+    { name: "Lavender Oil Capsules", use: "Anxiety Management", price: "₹550" },
+    { name: "B-Complex", use: "Nervous System Support", price: "₹400" }
+];
+
+function openPharmacyPage() {
+    const list = document.getElementById('medicineList');
+    list.innerHTML = pharmacyItems.map(m => `
+        <div class="medicine-card">
+            <div><b>${m.name}</b><br><small>${m.use}</small></div>
+            <button onclick="alert('Added to Cart: ${m.name}')" style="background:var(--warning); color:black;">Buy ${m.price}</button>
+        </div>
+    `).join('');
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    document.getElementById("pharmacyPage").classList.add("active");
+}
+
+// 3. DOCTOR APPOINTMENTS
+const doctors = [
+    { name: "Dr. Ananya Singh", spec: "Psychologist", fee: "₹1200" },
+    { name: "Dr. Kabir Verma", spec: "Psychiatrist", fee: "₹1500" },
+    { name: "Dr. Rohan Mehra", spec: "Neuropsychiatrist", fee: "₹2000" },
+    { name: "Dr. Ishita Iyer", spec: "Child & Adolescent Specialist", fee: "₹1800" },
+    { name: "Dr. Sameer Khan", spec: "CBT Specialist", fee: "₹1100" },
+    { name: "Dr. Meera Reddy", spec: "Counseling Psychologist", fee: "₹950" },
+    { name: "Dr. Aditya Joshi", spec: "Addiction Specialist", fee: "₹1600" },
+    { name: "Dr. Sneha Kapoor", spec: "Clinical Therapist", fee: "₹1300" },
+    { name: "Dr. Vikram Malhotra", spec: "Stress Management Expert", fee: "₹1400" },
+    { name: "Dr. Pooja Batra", spec: "Behavioral Therapist", fee: "₹1250" }
+];
+
+function openAppointmentPage() {
+    const list = document.getElementById('docList');
+    list.innerHTML = doctors.map(d => `
+        <div class="doctor-card">
+            <div><b>${d.name}</b><br><small>${d.spec}</small></div>
+            <button onclick="alert('Appointment requested for ${d.name}')">Book ${d.fee}</button>
+        </div>
+    `).join('');
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    document.getElementById("appointmentPage").classList.add("active");
+}
+
+// ORIGINAL NAVIGATION
+function openDetail(i){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(`detail-${i}`).classList.add("active");
+}
+function goHome(){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById("home").classList.add("active");
+}
+function openAbout(){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById("about").classList.add("active");
+}
+</script>
+
+</body>
+</html>
