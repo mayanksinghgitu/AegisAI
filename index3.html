@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>NeuroPredict Care AI – Affective Intelligence Engine</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Advanced AI-based Emotion Detection System for mental health awareness">
+<meta name="author" content="Mayank Singh">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg-0: #020b18;
+  --bg-1: #040f1f;
+  --bg-2: #071428;
+  --glass: rgba(6, 20, 44, 0.65);
+  --glass-border: rgba(0, 245, 212, 0.12);
+  --glass-border-hover: rgba(0, 245, 212, 0.35);
+
+  --teal:    #00f5d4;
+  --teal-dim: rgba(0, 245, 212, 0.15);
+  --teal-glow: rgba(0, 245, 212, 0.25);
+  --violet:  #7b5ea7;
+  --violet-bright: #a78bfa;
+  --coral:   #ff6b6b;
+  --amber:   #fbbf24;
+  --emerald: #10b981;
+
+  --text-0: #f0faf8;
+  --text-1: #b2d8d0;
+  --text-2: #6b9e96;
+  --text-muted: #3d6b63;
+
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'Epilogue', sans-serif;
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 36px;
+
+  --shadow-teal: 0 0 40px rgba(0, 245, 212, 0.15);
+  --shadow-card: 0 8px 40px rgba(0, 0, 0, 0.5), 0 1px 0 var(--glass-border) inset;
+  --shadow-btn:  0 4px 20px rgba(0, 245, 212, 0.3);
+
+  --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-0);
+  color: var(--text-0);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.65;
+  font-size: 15px; /* FIX: Base font size anchored */
+}
+
+/* Aurora background */
+.aurora {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(100px);
+  pointer-events: none;
+  z-index: 0;
+  animation: drift 18s ease-in-out infinite alternate;
+}
+.aurora-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(0,245,212,.08), transparent 70%); top: -150px; left: -150px; animation-delay: 0s; }
+.aurora-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(123,94,167,.10), transparent 70%); bottom: -100px; right: -100px; animation-delay: -6s; }
+.aurora-3 { width: 350px; height: 350px; background: radial-gradient(circle, rgba(255,107,107,.06), transparent 70%); top: 40%; left: 55%; animation-delay: -12s; }
+
+@keyframes drift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(60px, 40px) scale(1.15); }
+}
+
+/* Sign-In */
+#signInPage {
+  position: fixed; inset: 0; z-index: 10000;
+  background: var(--bg-0);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.auth-scene { position: relative; text-align: center; }
+
+/* FIX: Reduced auth logo size */
+.auth-logo {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4vw, 2.6rem); /* was 2.2–3.5rem */
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--teal), var(--violet-bright));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 6px;
+  animation: fade-up 0.8s ease both;
+}
+
+.auth-sub {
+  color: var(--text-2);
+  font-size: 0.8rem; /* was 0.9rem */
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 36px;
+  animation: fade-up 0.8s 0.1s ease both;
+}
+
+.auth-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  width: min(360px, 90vw);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-card), 0 0 60px rgba(0, 245, 212, 0.06);
+  animation: fade-up 0.8s 0.2s ease both;
+}
+
+.auth-field {
+  width: 100%;
+  padding: 12px 16px; /* was 14px 18px */
+  margin-bottom: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  background: rgba(0,245,212,.04);
+  color: var(--text-0);
+  font-family: var(--font-body);
+  font-size: 0.9rem; /* was 0.95rem */
+  transition: var(--transition);
+  outline: none;
+}
+.auth-field::placeholder { color: var(--text-muted); }
+.auth-field:focus {
+  border-color: rgba(0,245,212,.5);
+  background: rgba(0,245,212,.07);
+  box-shadow: 0 0 0 3px rgba(0,245,212,.12);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 20px; /* was 12px 22px */
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.83rem; /* was 0.88rem */
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(255,255,255,.08);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.btn:hover::before { opacity: 1; }
+.btn:active { transform: scale(0.97); }
+
+.btn-primary { background: linear-gradient(135deg, var(--teal) 0%, #00c4a8 100%); color: #020b18; box-shadow: var(--shadow-btn); }
+.btn-primary:hover { box-shadow: 0 6px 30px rgba(0,245,212,.45); transform: translateY(-1px); }
+.btn-secondary { background: rgba(255,255,255,.06); color: var(--text-0); border: 1px solid var(--glass-border); }
+.btn-secondary:hover { border-color: var(--glass-border-hover); background: rgba(255,255,255,.1); }
+.btn-emerald { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 4px 20px rgba(16,185,129,.3); }
+.btn-emerald:hover { box-shadow: 0 6px 30px rgba(16,185,129,.45); transform: translateY(-1px); }
+.btn-amber { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #020b18; box-shadow: 0 4px 20px rgba(251,191,36,.3); }
+.btn-amber:hover { box-shadow: 0 6px 30px rgba(251,191,36,.45); transform: translateY(-1px); }
+.btn-ghost { background: transparent; color: var(--text-1); border: 1px solid var(--glass-border); }
+.btn-ghost:hover { border-color: rgba(0,245,212,.4); color: var(--teal); }
+.btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+.btn-full { width: 100%; justify-content: center; }
+.btn-lg { padding: 13px 28px; font-size: 0.93rem; border-radius: var(--radius-md); } /* was 15px 32px / 1rem */
+.btn-sm { padding: 6px 13px; font-size: 0.76rem; } /* was 7px 14px / 0.8rem */
+
+/* Navbar */
+#navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+  padding: 0 clamp(16px, 4vw, 48px);
+  height: 64px; /* was 68px */
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(2, 11, 24, 0.7);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
+  transform: translateY(-100%);
+  animation: slide-down 0.7s 0.5s cubic-bezier(.22,1,.36,1) forwards;
+}
+
+.nav-brand {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1rem; /* was 1.1rem */
+  background: linear-gradient(135deg, var(--teal), var(--violet-bright));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+.nav-actions { display: flex; gap: 10px; align-items: center; }
+
+/* Page system */
+#mainApp { visibility: hidden; padding-top: 64px; }
+
+.page { display: none; opacity: 0; animation: page-in 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.page.active { display: block; opacity: 0; }
+
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Hero */
+.hero {
+  min-height: calc(100vh - 64px);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: clamp(40px, 8vw, 100px) clamp(16px, 5vw, 60px);
+  position: relative;
+}
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--teal-dim);
+  border: 1px solid rgba(0,245,212,.2);
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 0.73rem; /* was 0.8rem */
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--teal);
+  font-weight: 600;
+  margin-bottom: 24px;
+  animation: fade-up 0.8s 0.6s ease both;
+}
+
+.hero-eyebrow-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--teal);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0,245,212,.6); }
+  50%       { box-shadow: 0 0 0 6px rgba(0,245,212,0); }
+}
+
+/* FIX: Significantly reduced hero title size for professional look */
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 5vw, 3.8rem); /* was 2.4–5.5rem */
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+  animation: fade-up 0.8s 0.7s ease both;
+}
+
+.hero-title .line-teal {
+  background: linear-gradient(90deg, var(--teal), #00d4ff, var(--violet-bright));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+.hero-desc {
+  max-width: 560px;
+  color: var(--text-1);
+  font-size: clamp(0.9rem, 1.8vw, 1rem); /* was 1–1.15rem */
+  font-weight: 300;
+  margin-bottom: 36px;
+  animation: fade-up 0.8s 0.8s ease both;
+}
+
+.hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; animation: fade-up 0.8s 0.9s ease both; }
+
+.hero-stats {
+  display: flex; gap: clamp(20px, 4vw, 60px);
+  flex-wrap: wrap; justify-content: center;
+  margin-top: 60px;
+  animation: fade-up 0.8s 1.0s ease both;
+}
+.stat-item { text-align: center; }
+.stat-num {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.2rem); /* was 1.8–2.8rem */
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--teal), #00d4ff);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.stat-label { font-size: 0.72rem; color: var(--text-2); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px; }
+
+/* Section */
+.section {
+  padding: clamp(36px, 5vw, 70px) clamp(16px, 5vw, 60px);
+  max-width: 1280px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.section-eyebrow {
+  font-size: 0.72rem; /* was 0.78rem */
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--teal);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+/* FIX: Reduced section titles */
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3vw, 2.2rem); /* was 1.8–3rem */
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+}
+
+.section-desc {
+  color: var(--text-1);
+  font-size: 0.95rem; /* was 1.05rem */
+  max-width: 540px;
+  font-weight: 300;
+}
+
+/* Emotion grid */
+.emotion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 36px;
+}
+
+.emotion-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 24px 20px;
+  backdrop-filter: blur(16px);
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  display: flex; flex-direction: column; gap: 12px;
+  opacity: 0;
+  transform: translateY(24px);
+  animation: fade-up 0.6s ease forwards;
+}
+.emotion-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 20% 20%, var(--teal-glow) 0%, transparent 65%);
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+.emotion-card:hover { transform: translateY(-6px); border-color: var(--glass-border-hover); box-shadow: 0 20px 50px rgba(0,0,0,.5), 0 0 0 1px var(--glass-border-hover), var(--shadow-teal); }
+.emotion-card:hover::before { opacity: 1; }
+.emotion-icon { font-size: 2rem; line-height: 1; } /* was 2.4rem */
+.emotion-name { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--text-0); } /* was 1.15rem */
+.emotion-stat { font-size: 0.8rem; color: var(--text-2); font-weight: 300; line-height: 1.5; } /* was 0.85rem */
+
+.risk-badge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.66rem; /* was 0.7rem */
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.risk-high   { background: rgba(239,68,68,.15); color: #ef4444; border: 1px solid rgba(239,68,68,.3); }
+.risk-medium { background: rgba(251,191,36,.12); color: #fbbf24; border: 1px solid rgba(251,191,36,.25); }
+.risk-low    { background: rgba(16,185,129,.12); color: #10b981; border: 1px solid rgba(16,185,129,.25); }
+
+.emotion-card:nth-child(1) { animation-delay: 0.05s; }
+.emotion-card:nth-child(2) { animation-delay: 0.10s; }
+.emotion-card:nth-child(3) { animation-delay: 0.15s; }
+.emotion-card:nth-child(4) { animation-delay: 0.20s; }
+.emotion-card:nth-child(5) { animation-delay: 0.25s; }
+.emotion-card:nth-child(6) { animation-delay: 0.30s; }
+.emotion-card:nth-child(7) { animation-delay: 0.35s; }
+
+/* Glass card */
+.glass-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: clamp(20px, 3.5vw, 32px);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-card);
+  transition: var(--transition);
+}
+.glass-card:hover { border-color: var(--glass-border-hover); }
+
+/* Detail page */
+.detail-header {
+  display: flex; align-items: flex-start; gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+.detail-icon-wrap {
+  width: 70px; height: 70px; /* was 80px */
+  border-radius: var(--radius-md);
+  background: var(--teal-dim);
+  border: 1px solid rgba(0,245,212,.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.2rem; /* was 2.6rem */
+  flex-shrink: 0;
+}
+/* FIX: Reduced detail title */
+.detail-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3.5vw, 2.2rem); /* was 1.6–2.8rem */
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.detail-block {
+  background: rgba(0,245,212,.03);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+}
+.detail-block-label {
+  font-size: 0.66rem; /* was 0.7rem */
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--teal);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.detail-block ul { list-style: none; }
+.detail-block ul li {
+  font-size: 0.85rem; /* was 0.9rem */
+  color: var(--text-1);
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  display: flex; align-items: center; gap: 8px;
+}
+.detail-block ul li::before { content: '→'; color: var(--teal); font-size: 0.7rem; }
+.detail-block ul li:last-child { border-bottom: none; }
+.detail-block-value { font-family: var(--font-display); font-size: 0.95rem; font-weight: 600; color: var(--text-0); } /* was 1rem */
+.detail-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+
+/* Doctor list */
+.doctor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+  margin-top: 24px;
+}
+.doctor-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-left: 3px solid var(--emerald);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  backdrop-filter: blur(12px);
+  transition: var(--transition);
+  animation: fade-up 0.5s ease both;
+}
+.doctor-card:hover { transform: translateX(4px); border-color: rgba(16,185,129,.5); box-shadow: -4px 0 24px rgba(16,185,129,.15); }
+.doctor-card:nth-child(odd)  { animation-delay: 0.04s; }
+.doctor-card:nth-child(even) { animation-delay: 0.09s; }
+.doctor-avatar {
+  width: 42px; height: 42px; border-radius: 50%; /* was 46px */
+  background: linear-gradient(135deg, var(--teal), var(--violet));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0; /* was 1.1rem */
+}
+.doctor-info h4 { font-family: var(--font-display); font-size: 0.88rem; font-weight: 700; color: var(--text-0); } /* was 0.95rem */
+.doctor-info small { color: var(--text-2); font-size: 0.75rem; } /* was 0.8rem */
+
+/* Pharmacy */
+.medicine-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+  margin-top: 24px;
+}
+.medicine-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-top: 2px solid var(--amber);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  backdrop-filter: blur(12px);
+  transition: var(--transition);
+  animation: fade-up 0.5s ease both;
+}
+.medicine-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,.4), 0 0 0 1px rgba(251,191,36,.2); }
+.med-icon { font-size: 1.6rem; margin-bottom: 10px; } /* was 1.8rem */
+.med-name { font-family: var(--font-display); font-size: 0.93rem; font-weight: 700; margin-bottom: 4px; } /* was 1rem */
+.med-use { font-size: 0.78rem; color: var(--text-2); margin-bottom: 14px; } /* was 0.82rem */
+.med-footer { display: flex; align-items: center; justify-content: space-between; }
+.med-price { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--amber); } /* was 1.1rem */
+
+/* About page */
+.about-hero { display: flex; gap: 36px; flex-wrap: wrap; align-items: flex-start; margin-bottom: 32px; }
+.about-avatar-wrap {
+  width: 100px; height: 100px; flex-shrink: 0; /* was 120px */
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(0,245,212,.2), rgba(123,94,167,.2));
+  border: 2px solid var(--glass-border-hover);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.6rem; /* was 3rem */
+}
+/* FIX: Reduced about name size */
+.about-name {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3.5vw, 2rem); /* was 1.8–2.5rem */
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+.about-role { color: var(--teal); font-size: 0.82rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; } /* was 0.9rem */
+
+.skills-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 24px; }
+.skill-pill {
+  padding: 6px 13px;
+  border-radius: 999px;
+  background: var(--teal-dim);
+  border: 1px solid rgba(0,245,212,.2);
+  color: var(--teal);
+  font-size: 0.78rem; /* was 0.82rem */
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition: var(--transition);
+}
+.skill-pill:hover { background: rgba(0,245,212,.22); transform: scale(1.04); }
+
+.quote-block {
+  border-left: 3px solid var(--teal);
+  padding: 16px 22px;
+  background: var(--teal-dim);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  font-style: italic;
+  color: var(--text-1);
+  margin-top: 28px;
+  font-size: 0.95rem; /* was 1.05rem */
+}
+
+/* Ethics */
+.ethics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 12px;
+  margin-top: 24px;
+}
+.ethics-item {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: rgba(0,245,212,.03);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  transition: var(--transition);
+}
+.ethics-item:hover { border-color: rgba(0,245,212,.2); }
+.ethics-icon-box {
+  width: 34px; height: 34px; border-radius: var(--radius-sm);
+  background: var(--teal-dim);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.95rem; flex-shrink: 0;
+}
+.ethics-text { font-size: 0.83rem; color: var(--text-1); line-height: 1.55; } /* was 0.88rem */
+
+.disclaimer-bar {
+  background: rgba(239,68,68,.08);
+  border: 1px solid rgba(239,68,68,.2);
+  border-radius: var(--radius-md);
+  padding: 16px 22px;
+  display: flex; gap: 14px; align-items: flex-start;
+  margin-top: 24px;
+}
+.disclaimer-bar .di-icon { font-size: 1.2rem; flex-shrink: 0; } /* was 1.4rem */
+.disclaimer-bar p { font-size: 0.83rem; color: rgba(255,255,255,.7); line-height: 1.55; } /* was 0.88rem */
+.disclaimer-bar strong { color: #ef4444; }
+
+/* Footer */
+.site-footer {
+  text-align: center;
+  padding: 36px 20px;
+  border-top: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  font-size: 0.78rem; /* was 0.82rem */
+  letter-spacing: 0.04em;
+  position: relative; z-index: 1;
+}
+.site-footer span { color: var(--teal); }
+
+/* Chatbot */
+#chat-trigger {
+  position: fixed; bottom: 28px; right: 28px;
+  width: 54px; height: 54px; border-radius: 50%; /* was 58px */
+  background: linear-gradient(135deg, var(--teal), #00a8d4);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; z-index: 1000;
+  font-size: 20px; /* was 22px */
+  box-shadow: 0 6px 28px rgba(0,245,212,.4);
+  transition: var(--transition);
+  animation: pop-in 0.5s 1.2s cubic-bezier(.34,1.56,.64,1) both;
+  border: none;
+}
+#chat-trigger:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 8px 36px rgba(0,245,212,.6); }
+
+#chatbot-container {
+  position: fixed; bottom: 96px; right: 28px;
+  width: min(340px, calc(100vw - 40px));
+  height: 460px;
+  background: rgba(4, 15, 31, 0.97);
+  border: 1px solid var(--glass-border-hover);
+  border-radius: var(--radius-lg);
+  display: none; flex-direction: column;
+  z-index: 999;
+  overflow: hidden;
+  backdrop-filter: blur(24px);
+  box-shadow: 0 24px 60px rgba(0,0,0,.7), var(--shadow-teal);
+  transform-origin: bottom right;
+}
+
+#chatbot-container.open {
+  display: flex;
+  animation: chat-pop 0.35s cubic-bezier(.34,1.56,.64,1) both;
+}
+
+@keyframes chat-pop {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+#chat-header {
+  background: linear-gradient(135deg, rgba(0,245,212,.18), rgba(0,168,212,.08));
+  border-bottom: 1px solid var(--glass-border);
+  padding: 13px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+#chat-header .brand { font-family: var(--font-display); font-weight: 700; font-size: 0.88rem; color: var(--teal); } /* was 0.95rem */
+#chat-header .online { display: flex; align-items: center; gap: 6px; font-size: 0.68rem; color: var(--emerald); } /* was 0.72rem */
+#chat-header .online-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--emerald); animation: pulse-dot 2s infinite; }
+#chat-close { cursor: pointer; color: var(--text-2); font-size: 1rem; transition: color 0.2s; background: none; border: none; padding: 4px; }
+#chat-close:hover { color: var(--text-0); }
+
+#chat-history {
+  flex: 1; padding: 14px; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 10px;
+  scrollbar-width: thin; scrollbar-color: var(--teal-dim) transparent;
+}
+#chat-history::-webkit-scrollbar { width: 3px; }
+#chat-history::-webkit-scrollbar-thumb { background: var(--teal-dim); border-radius: 4px; }
+
+.bot-msg, .user-msg {
+  max-width: 88%; padding: 9px 13px;
+  border-radius: 12px; font-size: 0.83rem; line-height: 1.55; /* was 0.87rem */
+  animation: msg-in 0.3s ease both;
+}
+
+@keyframes msg-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.bot-msg {
+  background: rgba(0,245,212,.07);
+  border: 1px solid rgba(0,245,212,.12);
+  color: var(--text-1);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+.user-msg {
+  background: linear-gradient(135deg, rgba(0,245,212,.22), rgba(0,168,212,.18));
+  border: 1px solid rgba(0,245,212,.28);
+  color: var(--text-0);
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+#chat-input-box {
+  display: flex; gap: 8px;
+  padding: 12px;
+  border-top: 1px solid var(--glass-border);
+  flex-shrink: 0;
+}
+#chatInput {
+  flex: 1; background: rgba(255,255,255,.05); border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm); color: var(--text-0); padding: 9px 13px;
+  font-family: var(--font-body); font-size: 0.83rem; outline: none; /* was 0.87rem */
+  transition: var(--transition);
+}
+#chatInput:focus { border-color: rgba(0,245,212,.4); background: rgba(0,245,212,.05); }
+#chatInput::placeholder { color: var(--text-muted); }
+
+/* Keyframes */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slide-down {
+  from { transform: translateY(-100%); }
+  to   { transform: translateY(0); }
+}
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Back button */
+.page-back {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--text-2); font-size: 0.83rem; font-weight: 600; /* was 0.88rem */
+  cursor: pointer; width: fit-content;
+  transition: color 0.2s;
+  margin-bottom: 28px;
+  background: none; border: none; padding: 0;
+}
+.page-back:hover { color: var(--teal); }
+.page-back svg { transition: transform 0.2s; }
+.page-back:hover svg { transform: translateX(-3px); }
+
+.divider { height: 1px; background: linear-gradient(90deg, transparent, var(--glass-border), transparent); margin: 18px 0; }
+
+/* Toast */
+#toast {
+  position: fixed; bottom: 96px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: rgba(4,15,31,.95);
+  border: 1px solid var(--glass-border-hover);
+  border-radius: var(--radius-md);
+  padding: 12px 20px;
+  font-size: 0.83rem; /* was 0.88rem */
+  color: var(--text-0);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-card);
+  opacity: 0; pointer-events: none;
+  transition: all 0.4s cubic-bezier(.34,1.56,.64,1);
+  z-index: 9000;
+  white-space: nowrap;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Shimmer line */
+.shimmer-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--teal), transparent);
+  margin: 0 auto;
+  max-width: 900px;
+  opacity: 0.3;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .hero-ctas { flex-direction: column; align-items: center; }
+  .hero-ctas .btn { width: 100%; justify-content: center; max-width: 280px; }
+  .doctor-grid, .medicine-grid { grid-template-columns: 1fr; }
+  .about-hero { flex-direction: column; gap: 20px; }
+  #navbar .nav-actions .btn-ghost { display: none; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="aurora aurora-1"></div>
+<div class="aurora aurora-2"></div>
+<div class="aurora aurora-3"></div>
+
+<div id="toast">✓ Added to cart</div>
+
+<!-- SIGN-IN -->
+<div id="signInPage">
+  <div class="auth-scene">
+    <div class="auth-logo">NeuroPredict</div>
+    <div class="auth-sub">Care AI — Affective Intelligence Engine</div>
+
+    <div class="auth-card glass-card">
+      <h3 style="font-family:var(--font-display); font-size:1.2rem; font-weight:800; margin-bottom:5px;">Welcome Back</h3>
+      <p style="color:var(--text-2); font-size:0.82rem; margin-bottom:24px;">Sign in to access your AI MindCare Dashboard</p>
+
+      <input type="text"     class="auth-field" id="loginName" placeholder="Full Name" autocomplete="name">
+      <input type="password" class="auth-field" id="loginPass" placeholder="Password" autocomplete="current-password">
+
+      <button class="btn btn-primary btn-full btn-lg" style="margin-top:8px;" onclick="handleSignIn()">
+        Sign In →
+      </button>
+
+      <p style="color:var(--text-muted); font-size:0.72rem; margin-top:18px; text-align:center; line-height:1.5;">
+        By signing in you agree to our privacy policy.<br>No data is stored or shared.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-brand">NeuroPredict Care AI</div>
+  <div class="nav-actions">
+    <button class="btn btn-ghost btn-sm" onclick="openAbout()">Developer</button>
+    <button class="btn btn-emerald btn-sm" onclick="openAppointmentPage()">📅 Appointments</button>
+    <button class="btn btn-amber btn-sm" onclick="openPharmacyPage()">💊 Pharmacy</button>
+  </div>
+</nav>
+
+<!-- MAIN APP -->
+<div id="mainApp" style="position: relative; z-index: 1;">
+
+  <!-- HOME -->
+  <div class="page active" id="home">
+    <div class="hero">
+      <div class="hero-eyebrow">
+        <span class="hero-eyebrow-dot"></span>
+        AI-Powered Mental Health Intelligence
+      </div>
+
+      <h1 class="hero-title">
+        Decode Your<br>
+        <span class="line-teal">Emotional State</span><br>
+        with Precision AI
+      </h1>
+
+      <p class="hero-desc">
+        An advanced affective intelligence engine that analyzes seven fundamental human emotions
+        to support mental health awareness, clinical insight, and well-being.
+      </p>
+
+      <div class="hero-ctas">
+        <button class="btn btn-primary btn-lg" onclick="document.getElementById('emotion-section').scrollIntoView({behavior:'smooth'})">
+          Explore Emotions ↓
+        </button>
+        <button class="btn btn-secondary btn-lg" onclick="openAppointmentPage()">
+          Book a Specialist
+        </button>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-item"><div class="stat-num">7</div><div class="stat-label">Core Emotions</div></div>
+        <div class="stat-item"><div class="stat-num">10+</div><div class="stat-label">Specialists</div></div>
+        <div class="stat-item"><div class="stat-num">8</div><div class="stat-label">Pharmacy Items</div></div>
+        <div class="stat-item"><div class="stat-num">0</div><div class="stat-label">Data Stored</div></div>
+      </div>
+    </div>
+
+    <div class="shimmer-line"></div>
+
+    <div class="section" id="emotion-section">
+      <div class="section-eyebrow">Affective Analysis</div>
+      <h2 class="section-title">Seven Core Emotions</h2>
+      <p class="section-desc">Each emotion is profiled with risk levels, clinical insights, actionable guidance, and treatment pathways.</p>
+      <div class="emotion-grid" id="emotionGrid"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-eyebrow">Privacy & Ethics</div>
+      <h2 class="section-title">Built Responsibly</h2>
+      <div class="ethics-grid">
+        <div class="ethics-item"><div class="ethics-icon-box">🔒</div><div class="ethics-text">No facial data is stored or shared with any third party</div></div>
+        <div class="ethics-item"><div class="ethics-icon-box">📊</div><div class="ethics-text">Emotion detection is probabilistic, not absolute truth</div></div>
+        <div class="ethics-item"><div class="ethics-icon-box">✅</div><div class="ethics-text">User consent and informed privacy are foundational</div></div>
+        <div class="ethics-item"><div class="ethics-icon-box">🩺</div><div class="ethics-text">This system supports awareness; it does not diagnose</div></div>
+      </div>
+      <div class="disclaimer-bar">
+        <div class="di-icon">⚠️</div>
+        <p><strong>Disclaimer:</strong> This application is strictly for educational and awareness purposes only. It does not constitute medical advice, diagnosis, or treatment. Always consult a qualified mental health professional for clinical guidance.</p>
+      </div>
+    </div>
+
+    <div class="site-footer">
+      © 2026 <span>NeuroPredict Care AI</span> — Developed by <span>Mayank Singh</span><br>
+      B.Tech Computer Science & Engineering · AI/ML Specialization
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="page" id="about">
+    <div class="section">
+      <button class="page-back" onclick="goHome()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Home
+      </button>
+      <div class="glass-card">
+        <div class="about-hero">
+          <div class="about-avatar-wrap">👨‍💻</div>
+          <div>
+            <div class="section-eyebrow">Developer Profile</div>
+            <div class="about-name">Mayank Singh</div>
+            <div class="about-role">AI/ML Engineer · Computer Vision · Full Stack</div>
+            <p style="color:var(--text-2); font-size:0.85rem; max-width:460px;">B.Tech in Computer Science &amp; Engineering with specialization in Artificial Intelligence &amp; Machine Learning.</p>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:12px; margin-bottom:20px;">
+          <div class="detail-block"><div class="detail-block-label">Degree</div><div class="detail-block-value">B.Tech CSE</div></div>
+          <div class="detail-block"><div class="detail-block-label">Specialization</div><div class="detail-block-value">AI &amp; ML</div></div>
+          <div class="detail-block"><div class="detail-block-label">Focus Area</div><div class="detail-block-value">Computer Vision</div></div>
+        </div>
+        <div class="detail-block-label">Technical Skills</div>
+        <div class="skills-grid">
+          <div class="skill-pill">Python</div><div class="skill-pill">Java</div><div class="skill-pill">Machine Learning</div>
+          <div class="skill-pill">Deep Learning</div><div class="skill-pill">OpenCV</div><div class="skill-pill">Data Analytics</div>
+          <div class="skill-pill">Web Development</div><div class="skill-pill">TensorFlow</div><div class="skill-pill">Neural Networks</div>
+        </div>
+        <div class="quote-block">"Artificial Intelligence should enhance emotional intelligence, not replace it."</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPOINTMENTS -->
+  <div class="page" id="appointmentPage">
+    <div class="section">
+      <button class="page-back" onclick="goHome()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Home
+      </button>
+      <div class="section-eyebrow">MindCare Network</div>
+      <h2 class="section-title">Book a Specialist</h2>
+      <p class="section-desc">Connect with verified mental health professionals. Consultations are confidential.</p>
+      <div class="doctor-grid" id="docList"></div>
+    </div>
+  </div>
+
+  <!-- PHARMACY -->
+  <div class="page" id="pharmacyPage">
+    <div class="section">
+      <button class="page-back" onclick="goHome()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Home
+      </button>
+      <div class="section-eyebrow">MindCare Pharmacy</div>
+      <h2 class="section-title">AI-Suggested Supplements</h2>
+      <p class="section-desc">Safe, herbal, and scientifically-backed supplements for emotional and cognitive support.</p>
+      <div class="medicine-grid" id="medicineList"></div>
+    </div>
+  </div>
+
+  <!-- Detail pages injected here -->
+  <div id="detailPages"></div>
+</div>
+
+<!-- CHATBOT -->
+<!-- FIX: Added onclick directly to button element (was missing event listener) -->
+<button id="chat-trigger" title="Open MindCare AI Chat" onclick="toggleChat()">💬</button>
+
+<div id="chatbot-container">
+  <div id="chat-header">
+    <div>
+      <div class="brand">MindCare AI</div>
+      <div class="online"><span class="online-dot"></span> Online — Confidential</div>
+    </div>
+    <button id="chat-close" onclick="toggleChat()" title="Close">✕</button>
+  </div>
+  <div id="chat-history"></div>
+  <div id="chat-input-box">
+    <input type="text" id="chatInput" placeholder="How are you feeling today?" onkeydown="if(event.key==='Enter') sendChatMessage()">
+    <button class="btn btn-primary btn-sm" onclick="sendChatMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+/* DATA LAYER */
+const icons = { Angry:"😡", Disgust:"🤢", Fear:"😨", Happy:"😊", Neutral:"😐", Sad:"😢", Surprise:"😲" };
+const riskMap = { "High":"high", "Medium":"medium", "Low":"low" };
+
+const emotions = [
+  { name:"Angry",   risk:"High",   duration:"Long-term potential",  stats:"Strong response to perceived injustice.",    symptoms:["Increased HR","Aggression"],      impact:"Heart health issues",   prevention:["Mindfulness"],       do:["Deep breathing"],       avoid:["Impulsivity"],     treatment:"CBT" },
+  { name:"Disgust", risk:"Medium", duration:"Short-term",           stats:"Emotion of rejection.",                     symptoms:["Nausea"],                         impact:"Linked to OCD",        prevention:["Exposure"],          do:["Grounding"],            avoid:["Avoidance"],       treatment:"Psychotherapy" },
+  { name:"Fear",    risk:"High",   duration:"Chronic potential",    stats:"Survival mechanism.",                       symptoms:["Sweating","Hypervigilance"],       impact:"Sleep disruption",     prevention:["Routine"],           do:["Gradual exposure"],     avoid:["Catastrophizing"], treatment:"CBT" },
+  { name:"Happy",   risk:"Low",    duration:"Healthy state",        stats:"Reflects well-being.",                      symptoms:["Energy"],                         impact:"Better immunity",      prevention:["Gratitude"],         do:["Socializing"],          avoid:["Burnout"],         treatment:"None" },
+  { name:"Neutral", risk:"Low",    duration:"Stable baseline",      stats:"Emotional balance.",                        symptoms:["Calm"],                           impact:"Rational clarity",     prevention:["Awareness"],         do:["Reflection"],           avoid:["Ignoring stress"], treatment:"None" },
+  { name:"Sad",     risk:"High",   duration:"Chronic potential",    stats:"Response to loss.",                         symptoms:["Low energy"],                     impact:"Reduced functioning",  prevention:["Exercise"],          do:["Talking"],              avoid:["Isolation"],       treatment:"Counseling" },
+  { name:"Surprise",risk:"Low",    duration:"Very short",           stats:"Response to unexpected.",                   symptoms:["Raised brows"],                   impact:"Processes new info",   prevention:["Adaptability"],      do:["Calm breathing"],       avoid:["Panic"],           treatment:"None" }
+];
+
+const doctors = [
+  { name:"Dr. Ananya Singh",    spec:"Psychologist",                  fee:"₹1,200", avatar:"👩‍⚕️" },
+  { name:"Dr. Kabir Verma",     spec:"Psychiatrist",                  fee:"₹1,500", avatar:"👨‍⚕️" },
+  { name:"Dr. Rohan Mehra",     spec:"Neuropsychiatrist",             fee:"₹2,000", avatar:"🧠" },
+  { name:"Dr. Ishita Iyer",     spec:"Child & Adolescent Specialist", fee:"₹1,800", avatar:"👶" },
+  { name:"Dr. Sameer Khan",     spec:"CBT Specialist",                fee:"₹1,100", avatar:"🧘" },
+  { name:"Dr. Meera Reddy",     spec:"Counseling Psychologist",       fee:"₹950",   avatar:"💬" },
+  { name:"Dr. Aditya Joshi",    spec:"Addiction Specialist",          fee:"₹1,600", avatar:"🔬" },
+  { name:"Dr. Sneha Kapoor",    spec:"Clinical Therapist",            fee:"₹1,300", avatar:"🌿" },
+  { name:"Dr. Vikram Malhotra", spec:"Stress Management Expert",      fee:"₹1,400", avatar:"⚖️" },
+  { name:"Dr. Pooja Batra",     spec:"Behavioral Therapist",          fee:"₹1,250", avatar:"🎯" }
+];
+
+const medicineIcons = ["🌿","🧴","☀️","🍵","🌼","🐟","💜","🔋"];
+const pharmacyItems = [
+  { name:"Ashwagandha (Stress Relief)",  use:"Reduces Cortisol & Anxiety",    price:"₹450" },
+  { name:"Magnesium Glycinate",          use:"Relaxation & Better Sleep",     price:"₹800" },
+  { name:"Vitamin D3 (60K IU)",          use:"Mood Booster",                  price:"₹250" },
+  { name:"L-Theanine",                   use:"Mental Focus & Calm",           price:"₹600" },
+  { name:"Chamomile Tea Bags",           use:"Sleep & Digestive Comfort",     price:"₹350" },
+  { name:"Omega-3 Fish Oil",             use:"Cognitive Function",            price:"₹1,200"},
+  { name:"Lavender Oil Capsules",        use:"Anxiety Management",            price:"₹550" },
+  { name:"B-Complex",                    use:"Nervous System Support",        price:"₹400" }
+];
+
+const botKnowledge = {
+  greetings: ["Hello! I'm MindCare AI. How can I support your mental well-being today?", "Hi there. I'm here to listen. How are you feeling?"],
+  emergency: {
+    keywords: ["suicide","hurt","kill","die","emergency","help me"],
+    response: "🔴 <b>Immediate Help Needed:</b> If you are in immediate danger, please contact a crisis hotline or emergency services (112 in India). You are not alone."
+  },
+  emotions: {
+    sad:   { tips:"Try the '3-3-3 rule': Name 3 things you see, 3 sounds you hear, and move 3 parts of your body.", medicine:"Natural: Chamomile tea or Vitamin D. Clinical: Please see a psychiatrist for persistent low mood.", action:"Would you like to book a calming session with one of our specialists?" },
+    angry: { tips:"Try 'Box Breathing': Inhale for 4s, Hold for 4s, Exhale for 4s, Pause for 4s.", medicine:"Avoid stimulants like caffeine. Magnesium-rich foods (dark chocolate/nuts) can help.", action:"Try a quick physical activity like a 5-minute walk." },
+    fear:  { tips:"Grounding: Name 5 things you see, 4 you touch, 3 you hear, 2 you smell, 1 you taste.", medicine:"L-Theanine (in Green Tea) reduces physical stress responses.", action:"Focus on your breathing. You are safe in this moment." }
+  }
+};
+
+const emotionMedicines = {
+  sad:     "**Vitamin D** and **Omega-3 fatty acids** support brain health. Herbal: **Ashwagandha** helps balance cortisol.",
+  angry:   "**Magnesium** supplements relax muscles and the nervous system. **Lavender tea** is excellent for calm.",
+  fear:    "**L-Theanine** or **Chamomile** reduce the fight-or-flight response. **Passionflower** is also calming.",
+  disgust: "**Ginger** or **Peppermint tea** can help settle the stomach and the mind.",
+  surprise:"**Electrolytes** and **Lemon Balm** help stabilize the heart rate after a shock.",
+  neutral: "A good **Multivitamin** and consistent **B12** levels are key for mental clarity."
+};
+
+/* DOM BUILDERS */
+function buildEmotionGrid() {
+  const grid = document.getElementById("emotionGrid");
+  emotions.forEach((emo, i) => {
+    const card = document.createElement("div");
+    card.className = "emotion-card";
+    card.onclick = () => openDetail(i);
+    card.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div class="emotion-icon">${icons[emo.name]}</div>
+        <span class="risk-badge risk-${riskMap[emo.risk]}">${emo.risk} Risk</span>
+      </div>
+      <div>
+        <div class="emotion-name">${emo.name}</div>
+        <div class="emotion-stat">${emo.stats}</div>
+      </div>
+      <div style="margin-top:auto;">
+        <span style="font-size:0.7rem; color:var(--text-muted); letter-spacing:0.06em;">TAP TO EXPLORE →</span>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function buildDetailPages() {
+  const container = document.getElementById("detailPages");
+  emotions.forEach((emo, i) => {
+    const page = document.createElement("div");
+    /* FIX: was "card page" — "card" is not a valid page class and broke showPage() */
+    page.className = "page";
+    page.id = `detail-${i}`;
+    page.innerHTML = `
+      <div class="section">
+        <button class="page-back" onclick="goHome()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back to Home
+        </button>
+        <div class="glass-card">
+          <div class="detail-header">
+            <div class="detail-icon-wrap">${icons[emo.name]}</div>
+            <div>
+              <div class="section-eyebrow">Emotion Profile</div>
+              <div class="detail-title">${emo.name}</div>
+              <div style="margin-top:8px; display:flex; gap:10px; flex-wrap:wrap;">
+                <span class="risk-badge risk-${riskMap[emo.risk]}">${emo.risk} Risk</span>
+                <span style="font-size:0.72rem; color:var(--text-2); padding:3px 0;">${emo.duration}</span>
+              </div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <p style="color:var(--text-1); margin-bottom:18px; font-size:0.9rem;">${emo.stats}</p>
+          <div class="detail-grid">
+            <div class="detail-block">
+              <div class="detail-block-label">Symptoms</div>
+              <ul>${emo.symptoms.map(s=>`<li>${s}</li>`).join('')}</ul>
+            </div>
+            <div class="detail-block">
+              <div class="detail-block-label">Health Impact</div>
+              <div class="detail-block-value">${emo.impact}</div>
+            </div>
+            <div class="detail-block">
+              <div class="detail-block-label">Prevention</div>
+              <ul>${[].concat(emo.prevention).map(s=>`<li>${s}</li>`).join('')}</ul>
+            </div>
+            <div class="detail-block">
+              <div class="detail-block-label">What to Do</div>
+              <ul>${emo.do.map(s=>`<li>${s}</li>`).join('')}</ul>
+            </div>
+            <div class="detail-block">
+              <div class="detail-block-label">What to Avoid</div>
+              <ul>${emo.avoid.map(s=>`<li>${s}</li>`).join('')}</ul>
+            </div>
+            <div class="detail-block">
+              <div class="detail-block-label">Treatment</div>
+              <div class="detail-block-value">${[].concat(emo.treatment).join(', ')}</div>
+            </div>
+          </div>
+          <div class="detail-ctas">
+            <button class="btn btn-emerald" onclick="openAppointmentPage()">📅 Book Consultation</button>
+            <button class="btn btn-amber" onclick="openPharmacyPage()">💊 View Remedies</button>
+          </div>
+        </div>
+      </div>
+    `;
+    container.appendChild(page);
+  });
+}
+
+function buildDoctorList() {
+  const list = document.getElementById('docList');
+  list.innerHTML = doctors.map((d, i) => `
+    <div class="doctor-card" style="animation-delay:${i*0.05}s">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div class="doctor-avatar">${d.avatar}</div>
+        <div class="doctor-info">
+          <h4>${d.name}</h4>
+          <small>${d.spec}</small>
+        </div>
+      </div>
+      <button class="btn btn-emerald btn-sm" onclick="showToast('Appointment requested for ${d.name}')">
+        Book ${d.fee}
+      </button>
+    </div>
+  `).join('');
+}
+
+function buildPharmacyList() {
+  const list = document.getElementById('medicineList');
+  list.innerHTML = pharmacyItems.map((m, i) => `
+    <div class="medicine-card" style="animation-delay:${i*0.05}s">
+      <div class="med-icon">${medicineIcons[i] || '💊'}</div>
+      <div class="med-name">${m.name}</div>
+      <div class="med-use">${m.use}</div>
+      <div class="med-footer">
+        <div class="med-price">${m.price}</div>
+        <button class="btn btn-amber btn-sm" onclick="showToast('Added: ${m.name}')">Add to Cart</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* NAVIGATION */
+function showPage(id) {
+  document.querySelectorAll(".page").forEach(p => {
+    p.classList.remove("active");
+    p.style.display = "none";
+  });
+  const target = document.getElementById(id);
+  if (target) {
+    target.style.display = "block";
+    requestAnimationFrame(() => target.classList.add("active"));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function openDetail(i)         { showPage(`detail-${i}`); }
+function goHome()              { showPage("home"); }
+function openAbout()           { showPage("about"); }
+function openAppointmentPage() { buildDoctorList(); showPage("appointmentPage"); }
+function openPharmacyPage()    { buildPharmacyList(); showPage("pharmacyPage"); }
+
+/* TOAST */
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = "✓ " + msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2800);
+}
+
+/* SIGN-IN */
+function handleSignIn() {
+  const name = document.getElementById('loginName').value.trim();
+  if (name !== "") {
+    const overlay = document.getElementById('signInPage');
+    overlay.style.opacity = "0";
+    overlay.style.transition = "opacity 0.5s ease";
+    setTimeout(() => {
+      overlay.style.display = 'none';
+      const app = document.getElementById('mainApp');
+      app.style.visibility = 'visible';
+      app.style.animation = 'fade-up 0.6s ease both';
+    }, 500);
+  } else {
+    const field = document.getElementById('loginName');
+    field.style.borderColor = "#ef4444";
+    field.style.boxShadow = "0 0 0 3px rgba(239,68,68,.15)";
+    field.placeholder = "Please enter your name";
+    setTimeout(() => {
+      field.style.borderColor = '';
+      field.style.boxShadow = '';
+      field.placeholder = 'Full Name';
+    }, 2000);
+  }
+}
+
+/* FIX: Attach Enter key after DOM is ready */
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.auth-field').forEach(f => {
+    f.addEventListener('keydown', e => { if (e.key === 'Enter') handleSignIn(); });
+  });
+
+  buildEmotionGrid();
+  buildDetailPages();
+});
+
+/* CHATBOT */
+let chatOpen = false;
+let chatInitialized = false;
+
+function toggleChat() {
+  const box = document.getElementById('chatbot-container');
+  chatOpen = !chatOpen;
+  if (chatOpen) {
+    box.classList.add('open');
+    if (!chatInitialized) {
+      addBotMessage(botKnowledge.greetings[Math.floor(Math.random() * botKnowledge.greetings.length)]);
+      chatInitialized = true;
+    }
+    setTimeout(() => document.getElementById('chatInput').focus(), 200);
+  } else {
+    box.classList.remove('open');
+  }
+}
+
+function addBotMessage(html) {
+  const h = document.getElementById('chat-history');
+  const d = document.createElement('div');
+  d.className = 'bot-msg';
+  d.innerHTML = html;
+  h.appendChild(d);
+  h.scrollTop = h.scrollHeight;
+}
+
+function addUserMessage(text) {
+  const h = document.getElementById('chat-history');
+  const d = document.createElement('div');
+  d.className = 'user-msg';
+  d.textContent = text;
+  h.appendChild(d);
+  h.scrollTop = h.scrollHeight;
+}
+
+function sendChatMessage() {
+  const input = document.getElementById('chatInput');
+  const userText = input.value.trim();
+  const msg = userText.toLowerCase();
+  if (!msg) return;
+
+  addUserMessage(userText);
+  input.value = "";
+
+  setTimeout(() => {
+    let reply = "I'm here to help. Could you tell me more about how you feel? Try typing an emotion like <b>'I feel sad'</b>, or <b>'doctor'</b> for specialists.";
+
+    if (botKnowledge.emergency.keywords.some(k => msg.includes(k))) {
+      reply = botKnowledge.emergency.response;
+    } else if (msg.includes("sad") || msg.includes("depressed") || msg.includes("low")) {
+      const d = botKnowledge.emotions.sad;
+      reply = `<b>💙 Support Tip:</b> ${d.tips}<br><br><b>🌿 Remedy:</b> ${d.medicine}<br><br><i>${d.action}</i>`;
+    } else if (msg.includes("angry") || msg.includes("frustrated")) {
+      const d = botKnowledge.emotions.angry;
+      reply = `<b>🌊 Calming:</b> ${d.tips}<br><br><b>🥑 Dietary Tip:</b> ${d.medicine}`;
+    } else if (msg.includes("fear") || msg.includes("anxious") || msg.includes("scared")) {
+      const d = botKnowledge.emotions.fear;
+      reply = `<b>🌱 Grounding:</b> ${d.tips}<br><br><b>🍵 Suggestion:</b> ${d.action}`;
+    } else if (msg.includes("doctor") || msg.includes("appointment")) {
+      reply = `I've found 10 specialists for you. <button onclick="openAppointmentPage(); toggleChat();" style="background:var(--emerald); color:white; border:none; padding:5px 12px; border-radius:6px; cursor:pointer; margin-top:6px; font-size:0.78rem; display:inline-block;">View Specialist List</button>`;
+    } else if (msg.includes("medicine") || msg.includes("remedy") || msg.includes("supplement")) {
+      let det = null;
+      if (msg.includes("sad") || msg.includes("low")) det = "sad";
+      else if (msg.includes("angry") || msg.includes("frustrat")) det = "angry";
+      else if (msg.includes("fear") || msg.includes("anxious") || msg.includes("scared")) det = "fear";
+      else if (msg.includes("disgust")) det = "disgust";
+      else if (msg.includes("surprise")) det = "surprise";
+      if (det) {
+        reply = `💊 <b>Suggested for ${det}:</b> ${emotionMedicines[det]}<br><br><button onclick="openPharmacyPage(); toggleChat();" style="background:var(--amber); color:#020b18; border:none; padding:5px 12px; border-radius:6px; cursor:pointer; margin-top:6px; font-size:0.78rem; display:inline-block;">Open Pharmacy</button>`;
+      } else {
+        reply = "Which emotion are you feeling? Try typing <b>'medicine for sadness'</b> or <b>'medicine for anxiety'</b>.";
+      }
+    } else if (msg.includes("thanks") || msg.includes("thank you")) {
+      reply = "You're very welcome. Taking care of your mind is a priority. I'm here whenever you need me. 💙";
+    } else if (msg.includes("hello") || msg.includes("hi") || msg.includes("hey")) {
+      reply = botKnowledge.greetings[Math.floor(Math.random() * botKnowledge.greetings.length)];
+    } else if (msg.includes("happy")) {
+      reply = "😊 That's wonderful! Positive emotions are important to nurture. Keep up gratitude practices and social connections to maintain well-being.";
+    }
+
+    addBotMessage(reply);
+  }, 480);
+}
+</script>
+</body>
+</html>
